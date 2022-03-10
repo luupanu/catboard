@@ -1,7 +1,7 @@
 /* WEB AUDIO API SETUP */
 
 // audio context
-const c = new AudioContext({ latencyHint: 'interactive', sampleRate: 48000 })
+const c = new AudioContext({ latencyHint: 0.05, sampleRate: 48000 })
 
 // audio buffers to play soundfiles
 let audioBuffers = {}
@@ -66,8 +66,8 @@ const soundFiles = [
 /* FUNCTIONS */
 
 async function loadSound(path) {
-	const xhr = await fetch(path)
-	const arrayBuffer = await xhr.arrayBuffer()
+	const response = await fetch(path)
+	const arrayBuffer = await response.arrayBuffer()
 	return c.decodeAudioData(arrayBuffer)
 }
 
@@ -99,25 +99,20 @@ function registerKey(key, sound) {
 	})
 }
 
-/* CONTROLS */
-const controls = {
-	'input-master': newValue => masterGain.gain.value = newValue,
-	'input-delaygain': newValue => {
-		leftDelayGain.gain.value = newValue
-		rightDelayGain.gain.value = newValue
-	},
-	'input-delayfeedback': newValue => {
-		leftDelayFeedback.gain.value = newValue
-		rightDelayFeedback.gain.value = newValue
-	},
-	'input-ldelaytime': newValue => leftDelay.delayTime.linearRampToValueAtTime(newValue, c.currentTime + 0.01),
-	'input-rdelaytime': newValue => rightDelay.delayTime.linearRampToValueAtTime(newValue, c.currentTime + 0.01),
-}
-
-/* ONLOAD */
-
-window.onload = async () => {
-	const buttonDiv = document.getElementById('buttons')
+function registerControls() {
+	const controls = {
+		'input-master': newValue => masterGain.gain.value = newValue,
+		'input-delaygain': newValue => {
+			leftDelayGain.gain.value = newValue
+			rightDelayGain.gain.value = newValue
+		},
+		'input-delayfeedback': newValue => {
+			leftDelayFeedback.gain.value = newValue
+			rightDelayFeedback.gain.value = newValue
+		},
+		'input-ldelaytime': newValue => leftDelay.delayTime.exponentialRampToValueAtTime(newValue, c.currentTime + 0.05),
+		'input-rdelaytime': newValue => rightDelay.delayTime.exponentialRampToValueAtTime(newValue, c.currentTime + 0.05),
+	}
 
 	for (const [id, func] of Object.entries(controls)) {
 		const controller = document.getElementById(id)
@@ -126,6 +121,11 @@ window.onload = async () => {
 			func(controller.value)
 		})
 	}
+
+}
+
+async function loadCatSounds() {
+	const buttonDiv = document.getElementById('buttons')
 
 	for (let i = 0; i < soundFiles.length; i++) {
 		audioBuffers[soundFiles[i]] = await loadSound(soundFiles[i])
@@ -142,5 +142,10 @@ window.onload = async () => {
 
 		registerKey(keyboard[i], soundFiles[i])
 	}
+}
+
+window.onload = () => {
+	registerControls()
+	loadCatSounds()
 }
 

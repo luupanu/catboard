@@ -6,7 +6,6 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
-	<script type="module" src="StereoDelay.js"></script>
 	<script type="text/javascript" src="index.js"></script>
 </head>
 <body>
@@ -16,6 +15,10 @@
 		<div class="fader" id="master">
 			<input type="range" id="input-master" min="0" max="1" value="0.5" step="0.01" autocomplete="off">
 			<label>Master</label>
+		</div>
+		<div class="fader" id="reverbgain">
+			<input type="range" id="input-reverbgain" min="0" max="1" value="0.5" step="0.01" autocomplete="off">
+			<label>Reverb</label>
 		</div>
 		<div class="fader" id="delaygain">
 			<input type="range" id="input-delaygain" min="0" max="1" value="0" step="0.01" autocomplete="off">
