@@ -1,0 +1,81 @@
+body {
+	display: grid;
+	grid-template-columns: 800px auto;
+	grid-gap: 100px;
+	background-color: #15141a;
+	margin: 40px 40px;
+}
+
+button {
+	border-width: 10px;
+	margin: 0;
+	object-fit: cover;
+	color: #fcd20e;
+	backdrop-filter: blur(2px);
+	text-shadow: 2px 2px black;
+}
+
+label {
+	color: white;
+	font-family: 'Courier New', monospace;
+	font-size: 18px;
+}
+
+#buttons {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-template-rows: auto auto;
+	grid-gap: 40px;
+}
+
+.play-button {
+	font-size: 96px;
+	padding: 100px;
+}
+
+.play-button.active, .play-button:active {
+	border-color: red;
+}
+
+.fader {
+	width: 70px;
+}
+
+.fader label {
+	display: block;
+	margin-top: 144px;
+	text-align: center;
+}
+
+input {
+	display: inline;
+	transform: translate(-47px, 69px) rotate(-90deg);
+}
+
+#master {
+	grid-area: master;
+}
+
+#ldelaytime {
+	grid-area: ldelay;
+}
+
+#rdelaytime {
+	grid-area: rdelay;
+}
+
+#delayfeedback {
+	grid-area: delayf;
+}
+
+#delaygain {
+	grid-area: delayg;
+}
+
+#mixing {
+	display: grid;
+	grid-template-areas:
+		"ldelay rdelay delayf delayg"
+		". . . master";
+
+}
