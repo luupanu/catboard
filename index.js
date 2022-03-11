@@ -1,27 +1,44 @@
 /* WEB AUDIO API SETUP */
 
+let pitch = 0
+let chord
+let detuneRange = 200
+
 // audio context
 const c = new AudioContext({ latencyHint: 0.05, sampleRate: 48000 })
 
 // audio buffers to play soundfiles
 let audioBuffers = {}
 
+// audio source
+let source
+
+// input gain
+const inputGain = new GainNode(c, { gain: 0.2 })
+
 // master gain
 const masterGain = new GainNode(c, { gain: 0.5 })
 
 // dry signal
-const leftDry = new GainNode(c)
-const rightDry = new GainNode(c)
+const leftDelayDry = new GainNode(c)
+const rightDelayDry = new GainNode(c)
+
+// convolution reverb
+let convReverb = c.createConvolver()
+
+const reverbGain = new GainNode(c, { gain: 0.2 })
+
+const reverbDry = new GainNode(c)
 
 // delayed signal
 const leftDelay = new DelayNode(c, { delayTime: 0.22, maxDelayTime: 2 })
 const rightDelay = new DelayNode(c, { delayTime: 0.3, maxDelayTime: 2 })
 
-const leftDelayFeedback = new GainNode(c, { gain: 0.5 })
-const rightDelayFeedback = new GainNode(c, { gain: 0.5 })
+const leftDelayFeedback = new GainNode(c, { gain: 0.2 })
+const rightDelayFeedback = new GainNode(c, { gain: 0.2 })
 
-const leftDelayGain = new GainNode(c, { gain: 0 })
-const rightDelayGain = new GainNode(c, { gain: 0 })
+const leftDelayGain = new GainNode(c, { gain: 1 })
+const rightDelayGain = new GainNode(c, { gain: 1 })
 
 leftDelay.connect(leftDelayFeedback)
 leftDelayFeedback.connect(leftDelay)
@@ -35,12 +52,22 @@ rightDelay.connect(rightDelayGain)
 // merged signal
 const merger = new ChannelMergerNode(c, { numberOfInputs: 2 })
 
-leftDry.connect(merger, 0, 0)
+inputGain.connect(leftDelayDry)
+inputGain.connect(rightDelayDry)
+inputGain.connect(leftDelay)
+inputGain.connect(rightDelay)
+
+leftDelayDry.connect(merger, 0, 0)
 leftDelayGain.connect(merger, 0, 0)
-rightDry.connect(merger, 0, 1)
+rightDelayDry.connect(merger, 0, 1)
 rightDelayGain.connect(merger, 0, 1)
 
-merger.connect(masterGain).connect(c.destination)
+merger.connect(convReverb)
+merger.connect(masterGain)
+
+convReverb.connect(reverbGain)
+reverbGain.connect(masterGain)
+masterGain.connect(c.destination)
 
 /* OTHER SETUP */
 
@@ -71,18 +98,35 @@ async function loadSound(path) {
 	return c.decodeAudioData(arrayBuffer)
 }
 
-function playSound(soundFile) {
+function play(soundFile) {
+	if (document.getElementById('input-chord').checked)
+		playChord(soundFile)
+	else
+		playSound(soundFile)
+}
+
+function playSound(soundFile, detuneValue=null) {
 	const source = new AudioBufferSourceNode(c, { buffer: audioBuffers[soundFile], channelCount: 1 })
 
-	source.connect(leftDry)
-	source.connect(rightDry)
-	source.connect(leftDelay)
-	source.connect(rightDelay)
+	source.playbackRate.value = 2 ** (pitch / 12);
+	source.detune.value = detuneValue || Math.floor(Math.random() * detuneRange)
+	console.log(source.detune.value)
+
+	source.connect(inputGain)
 	source.start()
 
 	source.addEventListener('ended', event => {
 		source.disconnect()
 	})
+}
+
+function playChord(soundFile) {
+	playSound(soundFile, 42)
+	pitch += 4
+	playSound (soundFile, 24)
+	pitch += 3
+	playSound(soundFile, 50)
+	pitch -= 7
 }
 
 function registerKey(key, sound) {
@@ -112,6 +156,11 @@ function registerControls() {
 		},
 		'input-ldelaytime': newValue => leftDelay.delayTime.exponentialRampToValueAtTime(newValue, c.currentTime + 0.05),
 		'input-rdelaytime': newValue => rightDelay.delayTime.exponentialRampToValueAtTime(newValue, c.currentTime + 0.05),
+		'input-reverbgain': newValue => {
+			reverbGain.gain.value = newValue
+		},
+		'input-pitch': newValue => pitch = parseInt(newValue),
+		'input-detunerange': newValue => detuneRange = parseInt(newValue)
 	}
 
 	for (const [id, func] of Object.entries(controls)) {
@@ -120,8 +169,15 @@ function registerControls() {
 		controller.addEventListener('input', () => {
 			func(controller.value)
 		})
+
+		func(controller.value)
 	}
 
+}
+
+async function loadConvolutionReverb() {
+	const impulse = await loadSound('arundel_impulse_response_48kHz_modified.wav')
+	convReverb.buffer = impulse
 }
 
 async function loadCatSounds() {
@@ -133,7 +189,7 @@ async function loadCatSounds() {
 
 		button.innerText = `${keyboard[i]}`
 
-		button.setAttribute('onclick', `playSound("${soundFiles[i]}")`)
+		button.setAttribute('onclick', `play("${soundFiles[i]}")`)
 		button.setAttribute('class', 'play-button')
 		button.setAttribute('style', `background-image: url("${catPics[i]}"); background-size: cover; background-repeat: no-repeat;`)
 		button.setAttribute('id', keyboard[i])
@@ -146,6 +202,7 @@ async function loadCatSounds() {
 
 window.onload = () => {
 	registerControls()
+	loadConvolutionReverb()
 	loadCatSounds()
 }
 

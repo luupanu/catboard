@@ -17,6 +17,7 @@ button {
 
 label {
 	color: white;
+	display: block;
 	font-family: 'Courier New', monospace;
 	font-size: 18px;
 }
@@ -37,19 +38,31 @@ label {
 	border-color: red;
 }
 
-.fader {
+.fader, .numberbox {
 	width: 70px;
 }
 
 .fader label {
-	display: block;
 	margin-top: 144px;
-	text-align: center;
 }
 
-input {
+input[type="range"] {
 	display: inline;
 	transform: translate(-47px, 69px) rotate(-90deg);
+}
+
+input[type="number"] {
+	font-size: 24px;
+	width: 60px;
+	height: 30px;
+	margin-bottom: 20px;
+}
+
+input[type="checkbox"] {
+	width: 36px;
+	height: 36px;
+	margin-bottom: 17px;
+	/*transform: scale(2);*/
 }
 
 #master {
@@ -72,10 +85,19 @@ input {
 	grid-area: delayg;
 }
 
+#reverbgain {
+	grid-area: reverb;
+}
+
+#detunerange {
+	grid-area: detune;
+}
+
 #mixing {
 	display: grid;
 	grid-template-areas:
 		"ldelay rdelay delayf delayg"
-		". . . master";
+		". . . reverb"
+		"detune . . master";
 
 }

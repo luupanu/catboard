@@ -12,29 +12,41 @@
 	<div id="buttons">
 	</div>
 	<div id="mixing">
-		<div class="fader" id="master">
-			<input type="range" id="input-master" min="0" max="1" value="0.5" step="0.01" autocomplete="off">
-			<label>Master</label>
-		</div>
-		<div class="fader" id="reverbgain">
-			<input type="range" id="input-reverbgain" min="0" max="1" value="0.5" step="0.01" autocomplete="off">
-			<label>Reverb</label>
-		</div>
-		<div class="fader" id="delaygain">
-			<input type="range" id="input-delaygain" min="0" max="1" value="0" step="0.01" autocomplete="off">
-			<label>Delay</label>
-		</div>
-		<div class="fader" id="delayfeedback">
-			<input type="range" id="input-delayfeedback" min="0" max="0.9" value="0.5" step="0.01" autocomplete="off">
-			<label>Delay Feedback</label>
-		</div>
 		<div class="fader" id="ldelaytime">
-			<input type="range" id="input-ldelaytime" min="0" max="2.0" value="0.22" step="0.01" autocomplete="off">
+			<input type="range" id="input-ldelaytime" min="0" max="2.0" value="0.22" step="0.01" autocomplete="off" />
 			<label>LDelay Time</label>
 		</div>
 		<div class="fader" id="rdelaytime">
 			<input type="range" id="input-rdelaytime" min="0" max="2.0" value="0.3" step="0.01" autocomplete="off">
 			<label>RDelay Time</label>
+		</div>
+		<div class="fader" id="delayfeedback">
+			<input type="range" id="input-delayfeedback" min="0" max="0.9" value="0.1" step="0.01" autocomplete="off" />
+			<label>Delay Feedback</label>
+		</div>
+		<div class="fader" id="delaygain">
+			<input type="range" id="input-delaygain" min="0" max="1" value="0.2" step="0.01" autocomplete="off" />
+			<label>Delay</label>
+		</div>
+		<div class="numberbox">
+			<input type="number" id="input-pitch" value="-2" />
+			<label>Pitch</label>
+		</div>
+		<div class="numberbox">
+			<input type="checkbox" id="input-chord" />
+			<label>Chord</label>
+		</div>
+		<div class="fader" id="reverbgain">
+			<input type="range" id="input-reverbgain" min="0" max="1" value="0.3" step="0.01" autocomplete="off" />
+			<label>Reverb</label>
+		</div>
+		<div class="fader" id="detunerange">
+			<input type="range" id="input-detunerange" min="0" max="1200" value="200" step="5" autocomplete="off" />
+			<label>Detune Range</label>
+		</div>
+		<div class="fader" id="master">
+			<input type="range" id="input-master" min="0" max="1" value="0.5" step="0.01" autocomplete="off" />
+			<label>Master</label>
 		</div>
 	</div>
 </body>
