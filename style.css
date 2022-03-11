@@ -22,6 +22,10 @@ label {
 	font-size: 18px;
 }
 
+footer a {
+	color: #888;
+}
+
 #buttons {
 	display: grid;
 	grid-template-columns: auto auto;
