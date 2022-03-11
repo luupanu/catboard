@@ -59,8 +59,8 @@ input[type="number"] {
 }
 
 input[type="checkbox"] {
-	width: 36px;
-	height: 36px;
+	width: 34px;
+	height: 34px;
 	margin-bottom: 17px;
 	/*transform: scale(2);*/
 }
@@ -93,11 +93,19 @@ input[type="checkbox"] {
 	grid-area: detune;
 }
 
+#pitch {
+	grid-area: pitch;
+}
+
+#chord {
+	grid-area: chord;
+}
+
 #mixing {
 	display: grid;
 	grid-template-areas:
 		"ldelay rdelay delayf delayg"
-		". . . reverb"
+		"pitch chord . reverb"
 		"detune . . master";
 
 }
